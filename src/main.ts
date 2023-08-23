@@ -4,6 +4,8 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import { ConfigService } from '@nestjs/config';
+import { ConfigType } from './configs';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -13,6 +15,9 @@ async function bootstrap() {
 
   app.enableShutdownHooks();
 
-  await app.listen(3000, '0.0.0.0');
+  const configService = app.get(ConfigService<ConfigType, true>);
+  const port = configService.get('app.port', { infer: true });
+
+  await app.listen(port);
 }
 bootstrap();
